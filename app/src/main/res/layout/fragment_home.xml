@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/ivBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/bg_motivation"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80FFFFFF"/>
+    <ImageButton
+        android:id="@+id/btnRefreshQuote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="20dp"
+        android:src="@android:drawable/ic_popup_sync"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:tint="#000000"/>
+
+    <!-- Center: Quote of the Day -->
+    <LinearLayout
+        android:id="@+id/qotdCaptureArea"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="32dp">
+
+        <TextView
+            android:id="@+id/tvRandomQuote"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Quote goes here"
+            android:textColor="#000000"
+            android:textSize="26sp"
+            android:gravity="center"
+            android:lineSpacingExtra="8dp"
+            android:fontFamily="@font/dancing_script_family"/>
+
+        <TextView
+            android:id="@+id/tvRandomAuthor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="— Author"
+            android:textColor="#000000"
+            android:textSize="16sp"
+            android:layout_marginTop="20dp"
+            android:fontFamily="@font/dancing_script_family"/>
+
+        <TextView
+            android:id="@+id/tvCategoryLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Motivation"
+            android:textColor="#FB6F92"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginTop="12dp"/>
+
+        <!-- Heart + Share together -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageButton
+                android:id="@+id/btnFavoriteQOTD"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:src="@drawable/ic_heart_outline"
+                android:background="?attr/selectableItemBackgroundBorderless"/>
+
+            <ImageButton
+                android:id="@+id/btnShareQOTD"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@android:drawable/ic_menu_share"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:tint="#000000"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

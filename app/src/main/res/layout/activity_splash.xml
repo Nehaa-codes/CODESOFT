@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:background="@drawable/gradient_bg">
+
+    <TextView
+        android:id="@+id/tvSplashIcon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="❝"
+        android:textSize="70sp"
+        android:textColor="#FFFFFF"
+        android:fontFamily="@font/playfair_display_family"/>
+
+    <TextView
+        android:id="@+id/tvSplashTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="QuoteApp"
+        android:textSize="40sp"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:fontFamily="@font/dancing_script_family"
+        android:layout_marginTop="8dp"/>
+
+    <View
+        android:id="@+id/viewSplashDivider"
+        android:layout_width="60dp"
+        android:layout_height="2dp"
+        android:background="#FFD700"
+        android:layout_marginTop="16dp"/>
+
+    <TextView
+        android:id="@+id/tvSplashSubtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Believe in Yourself.."
+        android:textSize="15sp"
+        android:textColor="#E0D5F0"
+        android:letterSpacing="0.1"
+        android:layout_marginTop="16dp"/>
+
+</LinearLayout>
