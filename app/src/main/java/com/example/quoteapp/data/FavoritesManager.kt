@@ -6,6 +6,7 @@ import com.example.quoteapp.model.Quote
 class FavoritesManager(context: Context) {
 
     private val prefs = context.getSharedPreferences("favorites", Context.MODE_PRIVATE)
+    private val appContext = context.applicationContext
 
     fun saveFavorite(quote: Quote) {
         val set = getFavoriteIds().toMutableSet()
@@ -27,10 +28,10 @@ class FavoritesManager(context: Context) {
         return prefs.getStringSet("fav_ids", emptySet()) ?: emptySet()
     }
 
-    fun getFavoriteQuotes(context: android.content.Context): List<Quote> {
+    fun getFavoriteQuotes(): List<Quote> {
         val ids = getFavoriteIds()
         val defaultFavs = QuoteData.quotes.filter { ids.contains(it.id.toString()) }
-        val customFavs = CustomQuoteManager(context).getCustomQuotes()
+        val customFavs = CustomQuoteManager(appContext).getCustomQuotes()
             .filter { ids.contains(it.id.toString()) }
         return defaultFavs + customFavs
     }
