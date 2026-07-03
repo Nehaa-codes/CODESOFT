@@ -37,8 +37,7 @@ class FavoritesFragment : Fragment() {
     }
 
     private fun loadFavorites(view: View) {
-        val favorites = favoritesManager.getFavoriteQuotes().map {
-            it.copy(isFavorite = true)
+        val favorites = favoritesManager.getFavoriteQuotes(requireContext()).map {            it.copy(isFavorite = true)
         }
 
         val tvEmpty = view.findViewById<android.widget.TextView>(R.id.tvEmpty)

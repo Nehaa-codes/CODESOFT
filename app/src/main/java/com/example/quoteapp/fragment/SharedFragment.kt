@@ -62,6 +62,7 @@ class SharedFragment : Fragment() {
                     } else {
                         favoritesManager.removeFavorite(quote)
                     }
+                    loadShared(view)
                 },
                 onQuoteClick = { quote ->
                     val intent = Intent(requireContext(), QuoteDetailActivity::class.java)

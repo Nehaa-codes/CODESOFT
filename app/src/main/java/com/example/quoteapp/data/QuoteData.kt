@@ -94,7 +94,7 @@ object QuoteData {
         val today = java.text.SimpleDateFormat("yyyyMMdd", java.util.Locale.getDefault())
             .format(java.util.Date())
         val seed = today.toLong()
-        val index = (seed % quotes.size).toInt()
+        val index = ((seed % quotes.size) + quotes.size).toInt() % quotes.size
         return quotes[index]
     }
 }

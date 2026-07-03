@@ -27,8 +27,11 @@ class FavoritesManager(context: Context) {
         return prefs.getStringSet("fav_ids", emptySet()) ?: emptySet()
     }
 
-    fun getFavoriteQuotes(): List<Quote> {
+    fun getFavoriteQuotes(context: android.content.Context): List<Quote> {
         val ids = getFavoriteIds()
-        return QuoteData.quotes.filter { ids.contains(it.id.toString()) }
+        val defaultFavs = QuoteData.quotes.filter { ids.contains(it.id.toString()) }
+        val customFavs = CustomQuoteManager(context).getCustomQuotes()
+            .filter { ids.contains(it.id.toString()) }
+        return defaultFavs + customFavs
     }
 }
