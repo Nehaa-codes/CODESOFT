@@ -35,7 +35,9 @@ fun MainShellScreen() {
     var userName by remember { mutableStateOf("") }
     var selectedTab by remember { mutableStateOf(MainTab.HOME) }
 
-    // Load saved tasks + name once, when the shell first appears
+    // Load saved tasks + name once, when the shell first appears.
+    // Also triggers battery optimization prompt (Bug 3 fix) so it
+    // fires automatically on first run without user visiting Profile.
     LaunchedEffect(Unit) {
         val saved = TaskRepository.loadTasks(context)
         tasks.clear()
@@ -47,6 +49,10 @@ fun MainShellScreen() {
         saved.forEach { task ->
             ReminderScheduler.scheduleAllReminders(context, task)
         }
+
+        // Bug 3 fix: actually call the battery optimization prompt so it
+        // fires automatically instead of sitting unused in ReminderScheduler.
+        ReminderScheduler.requestIgnoreBatteryOptimizations(context)
     }
 
     // Save tasks to disk whenever the list changes (after initial load completes)

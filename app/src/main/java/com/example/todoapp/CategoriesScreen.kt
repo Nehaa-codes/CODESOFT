@@ -30,11 +30,13 @@ fun CategoriesScreen(
 ) {
     var selectedCategory by remember { mutableStateOf<TaskCategory?>(null) }
 
-    val filteredTasks = remember(tasks, selectedCategory) {
+    // Bug fix: don't use remember(tasks) here — the SnapshotStateList reference
+    // never changes, so remember would never recompute when items change.
+    // Compute directly so Compose recomputes on every recomposition.
+    val filteredTasks = run {
         val base = if (selectedCategory == null) tasks
         else tasks.filter { it.category == selectedCategory }
-
-        // Completed tasks sink to the bottom, within each category view
+        // Completed tasks sink to the bottom within each category view
         base.sortedBy { it.isDone }
     }
 

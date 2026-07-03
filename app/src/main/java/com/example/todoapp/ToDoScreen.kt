@@ -495,7 +495,6 @@ fun TaskDialog(
     var showDatePicker by remember { mutableStateOf(false) }
     var showTimePicker by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
-    var remindDayBefore by remember { mutableStateOf(existingTask?.remindDayBefore ?: true) }
     var remindHourBefore by remember { mutableStateOf(existingTask?.remindHourBefore ?: true) }
     var remindAtDeadline by remember { mutableStateOf(existingTask?.remindAtDeadline ?: true) }
     var repeatDaily by remember { mutableStateOf(existingTask?.repeatDaily ?: false) }
@@ -749,7 +748,7 @@ fun TaskDialog(
                             keyboardController?.hide()
                             onSave(
                                 title, priority, LocalDateTime.of(date, time),
-                                remindDayBefore, remindHourBefore, remindAtDeadline, repeatDaily,
+                                false, remindHourBefore, remindAtDeadline, repeatDaily,
                                 category
                             )
                         }
