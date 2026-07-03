@@ -5,6 +5,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -68,12 +71,14 @@ fun CompletedTasksScreen(
         } else {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(14.dp)) {
                 items(completedTasks, key = { it.id }) { task ->
-                    TaskCard(
-                        task = task,
-                        onCheckedChange = { checked -> onTaskChecked(task, checked) },
-                        onEdit = { /* editing a completed task isn't needed here */ },
-                        onDelete = { onTaskDelete(task) }
-                    )
+                    SwipeToDeleteWrapper(onDelete = { onTaskDelete(task) }) {
+                        TaskCard(
+                            task = task,
+                            onCheckedChange = { checked -> onTaskChecked(task, checked) },
+                            onEdit = { /* editing a completed task isn't needed here */ },
+                            onDelete = { onTaskDelete(task) }
+                        )
+                    }
                 }
             }
         }

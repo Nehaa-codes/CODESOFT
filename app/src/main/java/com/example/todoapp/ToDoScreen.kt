@@ -15,8 +15,14 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.DeleteSweep
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -69,6 +75,7 @@ fun HomeTabContent(
     }
     val randomQuote = remember { quotes.random() }
     var sortMode by remember { mutableStateOf(SortMode.PRIORITY) }
+    var searchQuery by remember { mutableStateOf("") }
 
     // Home shows only incomplete tasks - completed tasks live in their own tab
     val incompleteTasks = tasks.filter { !it.isDone }
@@ -82,6 +89,12 @@ fun HomeTabContent(
                 compareBy<TodoTask> { it.deadline }.thenByDescending { it.priority }
             )
         }
+    }
+
+    // Filter by search query - case insensitive title match
+    val filteredTasks = remember(sortedTasks, searchQuery) {
+        if (searchQuery.isBlank()) sortedTasks
+        else sortedTasks.filter { it.title.contains(searchQuery.trim(), ignoreCase = true) }
     }
 
     Column(
@@ -158,6 +171,45 @@ fun HomeTabContent(
 
         Spacer(modifier = Modifier.height(10.dp))
 
+        // Search bar
+        OutlinedTextField(
+            value = searchQuery,
+            onValueChange = { searchQuery = it },
+            placeholder = { Text("Search tasks...", fontSize = 13.sp, color = Color.Gray) },
+            singleLine = true,
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = PurpleDark,
+                unfocusedBorderColor = PurpleLight,
+                focusedTextColor = TextDark,
+                unfocusedTextColor = TextDark,
+                cursorColor = PurpleDark
+            ),
+            leadingIcon = {
+                Icon(
+                    imageVector = androidx.compose.material.icons.Icons.Default.Search,
+                    contentDescription = "Search",
+                    tint = PurpleLight,
+                    modifier = Modifier.size(20.dp)
+                )
+            },
+            trailingIcon = {
+                if (searchQuery.isNotEmpty()) {
+                    IconButton(onClick = { searchQuery = "" }) {
+                        Icon(
+                            imageVector = androidx.compose.material.icons.Icons.Default.Close,
+                            contentDescription = "Clear search",
+                            tint = Color.Gray,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                }
+            }
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.End
@@ -170,31 +222,44 @@ fun HomeTabContent(
 
         Spacer(modifier = Modifier.height(6.dp))
 
-        if (sortedTasks.isEmpty()) {
+        if (filteredTasks.isEmpty()) {
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(text = "📝", fontSize = 48.sp)
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "No tasks yet!\nTap + to add one",
-                        color = Color.LightGray,
-                        fontSize = 16.sp,
-                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
-                    )
+                    if (searchQuery.isNotBlank()) {
+                        Text(text = "🔍", fontSize = 48.sp)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "No tasks match \"$searchQuery\"",
+                            color = Color.LightGray,
+                            fontSize = 16.sp,
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                        )
+                    } else {
+                        Text(text = "📝", fontSize = 48.sp)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "No tasks yet!\nTap + to add one",
+                            color = Color.LightGray,
+                            fontSize = 16.sp,
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                        )
+                    }
                 }
             }
         } else {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(14.dp)) {
-                items(sortedTasks, key = { it.id }) { task ->
-                    TaskCard(
-                        task = task,
-                        onCheckedChange = { checked -> onTaskChecked(task, checked) },
-                        onEdit = { onTaskEdit(task) },
-                        onDelete = { onTaskDelete(task) }
-                    )
+                items(filteredTasks, key = { it.id }) { task ->
+                    SwipeToDeleteWrapper(onDelete = { onTaskDelete(task) }) {
+                        TaskCard(
+                            task = task,
+                            onCheckedChange = { checked -> onTaskChecked(task, checked) },
+                            onEdit = { onTaskEdit(task) },
+                            onDelete = { onTaskDelete(task) }
+                        )
+                    }
                 }
             }
         }
@@ -282,6 +347,54 @@ fun TaskStatBox(
             color = color
         )
     }
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SwipeToDeleteWrapper(
+    onDelete: () -> Unit,
+    content: @Composable () -> Unit
+) {
+    val dismissState = rememberSwipeToDismissBoxState(
+        confirmValueChange = { value ->
+            if (value == SwipeToDismissBoxValue.EndToStart) {
+                onDelete()
+                true
+            } else false
+        },
+        positionalThreshold = { it * 0.4f } // must swipe 40% across to trigger
+    )
+
+    SwipeToDismissBox(
+        state = dismissState,
+        enableDismissFromStartToEnd = false, // only right-to-left swipe
+        enableDismissFromEndToStart = true,
+        backgroundContent = {
+            val color by androidx.compose.animation.animateColorAsState(
+                targetValue = if (dismissState.dismissDirection == SwipeToDismissBoxValue.EndToStart)
+                    Color(0xFFE53935) else Color.Transparent,
+                label = "swipe background"
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color, RoundedCornerShape(12.dp))
+                    .padding(end = 20.dp),
+                contentAlignment = Alignment.CenterEnd
+            ) {
+                if (dismissState.dismissDirection == SwipeToDismissBoxValue.EndToStart) {
+                    Icon(
+                        imageVector = Icons.Default.DeleteSweep,
+                        contentDescription = "Delete",
+                        tint = Color.White,
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
+            }
+        },
+        content = { content() }
+    )
 }
 
 @Composable

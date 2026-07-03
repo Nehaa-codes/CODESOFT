@@ -8,6 +8,9 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -98,12 +101,14 @@ fun CategoriesScreen(
         } else {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(14.dp)) {
                 items(filteredTasks, key = { it.id }) { task ->
-                    TaskCard(
-                        task = task,
-                        onCheckedChange = { checked -> onTaskChecked(task, checked) },
-                        onEdit = { onTaskEdit(task) },
-                        onDelete = { onTaskDelete(task) }
-                    )
+                    SwipeToDeleteWrapper(onDelete = { onTaskDelete(task) }) {
+                        TaskCard(
+                            task = task,
+                            onCheckedChange = { checked -> onTaskChecked(task, checked) },
+                            onEdit = { onTaskEdit(task) },
+                            onDelete = { onTaskDelete(task) }
+                        )
+                    }
                 }
             }
         }
